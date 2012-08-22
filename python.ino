@@ -26,6 +26,12 @@
 #define NOINT1 24
 volatile int int0 = 0;
 volatile int int1 = 0;
+void reply();
+int rdata();
+void parser();
+void pycallback0();
+void pycallback1();
+
 int rdata(){
   reply();
   //Serial.println(NEXT);
