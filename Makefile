@@ -28,29 +28,30 @@ SKETCH_NAME=python.ino
 #  Duemilanove, in GNU/linux: generally /dev/ttyUSB0
 PORT=/dev/ttyUSB0
 # The path of Arduino IDE
-ARDUINO_DIR=$(HOME)/lib/arduino
+ARDUINO_DIR= /opt/homebrew-cask/Caskroom/arduino/1.5.5/Arduino.app/Contents/Resources/Java
+ARCH=avr
 # Boardy type: use "arduino" for Uno or "stk500v1" for Duemilanove
 BOARD_TYPE=arduino
 # Baud-rate: use "115200" for Uno or "19200" for Duemilanove
 BAUD_RATE=115200
 
 #Compiler and uploader configuration
-ARDUINO_CORE=$(ARDUINO_DIR)/hardware/arduino/cores/arduino
-INCLUDE=-I. -I$(ARDUINO_DIR)/hardware/arduino/cores/arduino -I$(ARDUINO_DIR)/hardware/arduino/variants/standard
+ARDUINO_CORE=$(ARDUINO_DIR)/hardware/arduino/$(ARCH)/cores/arduino
+INCLUDE=-I. -I$(ARDUINO_DIR)/hardware/arduino/$(ARCH)/cores/arduino -I$(ARDUINO_DIR)/hardware/arduino/$(ARCH)/variants/standard
 TMP_DIR=/tmp/build_arduino
 MCU=atmega328p
 DF_CPU=16000000
-CC=/usr/bin/avr-gcc
-CPP=/usr/bin/avr-g++
-AVR_OBJCOPY=/usr/bin/avr-objcopy 
-AVRDUDE=/usr/bin/avrdude
+CC=avr-gcc
+CPP=avr-g++
+AVR_OBJCOPY=avr-objcopy
+AVRDUDE=avrdude
 CC_FLAGS=-g -Os -w -Wall -ffunction-sections -fdata-sections -fno-exceptions \
 	 -std=gnu99
 CPP_FLAGS=-g -Os -w -Wall -ffunction-sections -fdata-sections -fno-exceptions
 AVRDUDE_CONF=/etc/avrdude.conf
 CORE_C_FILES=WInterrupts wiring_analog wiring wiring_digital \
 	     wiring_pulse wiring_shift
-CORE_CPP_FILES=CDC HardwareSerial HID IPAddress main new Print Stream Tone USBCore WMath WString
+CORE_CPP_FILES=main HardwareSerial Print Tone
 
 
 all:clean compile
@@ -76,7 +77,7 @@ compile:
 		$(CPP) -c -mmcu=$(MCU) -DF_CPU=$(DF_CPU) $(INCLUDE) \
 		       $(CPP_FLAGS) "$(TMP_DIR)/$(SKETCH_NAME).cpp" \
 		       -o "$(TMP_DIR)/$(SKETCH_NAME).o"
-		
+
 		@#Compiling Arduino core .c dependecies:
 		for core_c_file in ${CORE_C_FILES}; do \
 		    $(CC) -c -mmcu=$(MCU) -DF_CPU=$(DF_CPU) $(INCLUDE) \
@@ -108,7 +109,7 @@ reset:
 		stty --file $(PORT) hupcl
 		sleep 0.1
 		stty --file $(PORT) -hupcl
-		
+
 
 upload:
 		@echo '# *** Uploading...'
